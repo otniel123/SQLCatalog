@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -23,9 +24,18 @@ public class ScriptController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Script>> getScript(){
-        return ResponseEntity.status(200).body(scriptService.listarScript());
+    public ResponseEntity<List<Script>> getScript(@RequestParam(required = false) String banco,
+                                                  @RequestParam(required = false) String categoria,
+                                                  @RequestParam(required = false) String texto,
+                                                  @RequestParam(required = false) String tag){
+        if (scriptService.listarScript(banco, categoria, texto,tag) == null){
+            return ResponseEntity.status(400).body(null);
+        }
+        return ResponseEntity.status(200).body(scriptService.listarScript(banco, categoria, texto
+                , tag));
     }
+
+
 
     @GetMapping("{id}")
     public ResponseEntity<Script> getScriptById(@PathVariable("id") Long id){
