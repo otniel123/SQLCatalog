@@ -2,24 +2,34 @@ package com.registradorSQL.SQLCatalog.model;
 
 import com.registradorSQL.SQLCatalog.enu.BancoDados;
 import com.registradorSQL.SQLCatalog.enu.Categoria;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.stereotype.Component;
+import jakarta.persistence.*;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-@Component
-public class Script {
+@Entity
+@Table(name = "Script")
+public class Script implements Serializable{
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String titulo;
     private String descricao;
     private String conteudo;
+    @Enumerated(EnumType.STRING)
     private BancoDados bancoDados;
+
+    @Enumerated(EnumType.STRING)
     private Categoria categoria;
+
+    @ElementCollection
+    @Enumerated(EnumType.STRING)
     private List<String> tags = new ArrayList<>();
     private LocalDateTime dataCriacao;
     private LocalDateTime dataAtualizacao;

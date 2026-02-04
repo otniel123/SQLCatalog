@@ -3,6 +3,8 @@ package com.registradorSQL.SQLCatalog.service;
 import com.registradorSQL.SQLCatalog.enu.BancoDados;
 import com.registradorSQL.SQLCatalog.enu.Categoria;
 import com.registradorSQL.SQLCatalog.model.Script;
+import com.registradorSQL.SQLCatalog.repository.ScriptRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,18 +18,20 @@ public class ScriptService {
 
     List<Script> listScript = new ArrayList<>();
 
+    @Autowired
+    ScriptRepository scriptRepository;
+
     private Long proximoId = 1L;
 
+    @Transactional
     public Script criaScript(Script script){
-        script.setId(proximoId++);
         script.setDataCriacao(LocalDateTime.now());
         script.setDataAtualizacao(LocalDateTime.now());
-        listScript.add(script);
-        return script;
+        return scriptRepository.save(script);
     }
 
     public List<Script> listarScript(String banco, String categoria, String texto, String tag){
-        Stream<Script> stream = listScript.stream();
+        Stream<Script> stream = scriptRepository.findAll().stream();
         if (banco != null && !banco.isEmpty()){
             try {
                 BancoDados bancoDados = BancoDados.valueOf(banco.toUpperCase());
@@ -35,7 +39,6 @@ public class ScriptService {
             }catch (IllegalArgumentException e) {
                 Collections.emptyList();
             }
-
         }
         if (categoria != null && !categoria.isEmpty()){
             try{
@@ -63,46 +66,48 @@ public class ScriptService {
                 return Collections.emptyList();
             }
         }
-        stream = stream.sorted(Comparator.comparing(Script::getDataAtualizacao).reversed());
+
         return stream.toList();
     }
 
+    @Transactional
     public Script listarScriptById(Long id){
-        for (Script s : listScript){
+        for (Script s : scriptRepository.findAll()){
             if (s.getId() == id){
-                return s;
+                return scriptRepository.getById(id);
             }
         }
         return null;
     }
 
     public Script atualizarScript(Script script, Long id){
-            for (int i = 0; i<= listScript.size(); i++){
-                if (listScript.get(i).getId().equals(id)){
-                    script.setId(listScript.get(i).getId());
-                    script.setDataAtualizacao(LocalDateTime.now());
-                    script.setDataCriacao(listScript.get(i).getDataCriacao());
-                    listScript.set(i, script);
-                    return script;
-                }
+        Optional<Script> optionalScript = scriptRepository.findById(id);
+
+        if (optionalScript.isEmpty()) {
+            return null;
         }
-        return null;
+
+        Script scriptOriginal = optionalScript.get();
+
+        script.setId(id);
+        script.setDataCriacao(scriptOriginal.getDataCriacao());
+        script.setDataAtualizacao(LocalDateTime.now());
+
+        return scriptRepository.save(script);
     }
 
     public Integer deleteScript(Long id){
-        for (Script s : listScript){
-            if (s.getId() == id){
-                listScript.remove(s);
+            if (scriptRepository.existsById(id)){
+                scriptRepository.deleteById(id);
                 return 0;
             }
-        }
         return 1;
     }
 
     public List<Script> getScriptByBancoDados(String bancoDados){
         try {
             BancoDados banco = BancoDados.valueOf(bancoDados.toUpperCase());
-            return listScript.stream().filter(s -> s.getBancoDados() == banco).toList();
+            return scriptRepository.listScriptByBancoDados(banco);
         }catch (IllegalArgumentException e) {
             return null;
         }
@@ -111,7 +116,7 @@ public class ScriptService {
     public List<Script> getScriptByCategoria(String categoria){
         try{
             Categoria catg = Categoria.valueOf(categoria.toUpperCase());
-            return listScript.stream().filter(s -> s.getCategoria() == catg).toList();
+            return scriptRepository.listScriptByCategoria(catg);
         }catch (IllegalArgumentException e){
             return null;
         }

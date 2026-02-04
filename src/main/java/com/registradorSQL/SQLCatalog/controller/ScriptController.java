@@ -2,13 +2,10 @@ package com.registradorSQL.SQLCatalog.controller;
 
 import com.registradorSQL.SQLCatalog.model.Script;
 import com.registradorSQL.SQLCatalog.service.ScriptService;
-import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -48,8 +45,9 @@ public class ScriptController {
     @PutMapping("{id}")
     public ResponseEntity<Script> atualizarScript(@RequestBody Script script,
                                                   @PathVariable("id") Long id){
-        if (scriptService.atualizarScript(script, id) != null){
-            return ResponseEntity.status(200).body(script);
+        Script scriptAtualizado = scriptService.atualizarScript(script, id);
+        if (scriptAtualizado != null){
+            return ResponseEntity.status(200).body(scriptAtualizado);
         }
         return ResponseEntity.status(404).body(null);
     }
