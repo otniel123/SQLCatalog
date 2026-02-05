@@ -3,6 +3,9 @@ package com.registradorSQL.SQLCatalog.model;
 import com.registradorSQL.SQLCatalog.enu.BancoDados;
 import com.registradorSQL.SQLCatalog.enu.Categoria;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -19,12 +22,20 @@ public class Script implements Serializable{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Título é obrigatório")
     private String titulo;
+
+    @Size(max = 500, message = "Descrição só pode ter até 500 caracteres")
     private String descricao;
+
+    @NotBlank(message = "Conteúdo é obrigatório")
     private String conteudo;
+
+    @NotNull(message = "Banco de dados é obrigatório")
     @Enumerated(EnumType.STRING)
     private BancoDados bancoDados;
 
+    @NotNull(message = "Categoria é obrigatória")
     @Enumerated(EnumType.STRING)
     private Categoria categoria;
 

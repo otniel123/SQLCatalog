@@ -2,6 +2,7 @@ package com.registradorSQL.SQLCatalog.controller;
 
 import com.registradorSQL.SQLCatalog.model.Script;
 import com.registradorSQL.SQLCatalog.service.ScriptService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,13 +11,14 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/scripts")
+@Valid
 public class ScriptController {
 
     @Autowired
     private ScriptService scriptService;
 
     @PostMapping
-    public ResponseEntity<Script> criarScript(@RequestBody Script script){
+    public ResponseEntity<Script> criarScript(@Valid @RequestBody Script script){
         return ResponseEntity.status(201).body(scriptService.criaScript(script));
     }
 
@@ -24,12 +26,16 @@ public class ScriptController {
     public ResponseEntity<List<Script>> getScript(@RequestParam(required = false) String banco,
                                                   @RequestParam(required = false) String categoria,
                                                   @RequestParam(required = false) String texto,
-                                                  @RequestParam(required = false) String tag){
-        if (scriptService.listarScript(banco, categoria, texto,tag) == null){
+                                                  @RequestParam(required = false) String tag,
+                                                  @RequestParam(required = false, defaultValue =
+                                                          "0") Integer page,
+                                                  @RequestParam(required = false, defaultValue =
+                                                          "20") Integer size){
+        if (scriptService.listarScript(banco, categoria, texto,tag, page, size) == null){
             return ResponseEntity.status(400).body(null);
         }
         return ResponseEntity.status(200).body(scriptService.listarScript(banco, categoria, texto
-                , tag));
+                , tag, page, size));
     }
 
 
@@ -43,7 +49,7 @@ public class ScriptController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Script> atualizarScript(@RequestBody Script script,
+    public ResponseEntity<Script> atualizarScript(@Valid @RequestBody Script script,
                                                   @PathVariable("id") Long id){
         Script scriptAtualizado = scriptService.atualizarScript(script, id);
         if (scriptAtualizado != null){

@@ -3,6 +3,8 @@ package com.registradorSQL.SQLCatalog.repository;
 import com.registradorSQL.SQLCatalog.enu.BancoDados;
 import com.registradorSQL.SQLCatalog.enu.Categoria;
 import com.registradorSQL.SQLCatalog.model.Script;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -21,4 +23,6 @@ public interface ScriptRepository extends JpaRepository<Script, Long> {
             ":categoria", nativeQuery = true)
     List<Script> listScriptByBancoAndCategoria(@Param("banco_dados") BancoDados bancoDados,
                                                @Param("categoria") Categoria categoria);
+
+    Page<Script> findAll(Pageable pageable);
 }

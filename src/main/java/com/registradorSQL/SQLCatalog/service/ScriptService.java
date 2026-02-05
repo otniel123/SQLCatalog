@@ -4,8 +4,10 @@ import com.registradorSQL.SQLCatalog.enu.BancoDados;
 import com.registradorSQL.SQLCatalog.enu.Categoria;
 import com.registradorSQL.SQLCatalog.model.Script;
 import com.registradorSQL.SQLCatalog.repository.ScriptRepository;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -30,8 +32,9 @@ public class ScriptService {
         return scriptRepository.save(script);
     }
 
-    public List<Script> listarScript(String banco, String categoria, String texto, String tag){
-        Stream<Script> stream = scriptRepository.findAll().stream();
+    public List<Script> listarScript(String banco, String categoria, String texto, String tag,
+                                     Integer page, Integer size){
+        Stream<Script> stream = scriptRepository.findAll(PageRequest.of(page, size)).stream();
         if (banco != null && !banco.isEmpty()){
             try {
                 BancoDados bancoDados = BancoDados.valueOf(banco.toUpperCase());
@@ -66,7 +69,8 @@ public class ScriptService {
                 return Collections.emptyList();
             }
         }
-
+        stream = stream.sorted(Comparator.comparing(Script::getDataAtualizacao,
+                Comparator.nullsFirst(Comparator.naturalOrder())).reversed());
         return stream.toList();
     }
 
