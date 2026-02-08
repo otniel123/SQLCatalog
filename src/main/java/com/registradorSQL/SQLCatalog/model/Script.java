@@ -39,6 +39,10 @@ public class Script implements Serializable{
     @Enumerated(EnumType.STRING)
     private Categoria categoria;
 
+    @ManyToOne( fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_usuario", nullable = false)
+    private Usuario usuario;
+
     @ElementCollection
     @Enumerated(EnumType.STRING)
     private List<String> tags = new ArrayList<>();
