@@ -40,6 +40,7 @@ public class ScriptService {
         return scriptRepository.save(script);
     }
 
+    @Transactional
     public List<Script> listarScript(String banco, String categoria, String texto, String tag,
                                      Integer page, Integer size) {
         Usuario usuarioLogado = authService.getUsuarioLogado();

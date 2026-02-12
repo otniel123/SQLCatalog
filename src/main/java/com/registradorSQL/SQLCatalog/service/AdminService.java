@@ -78,7 +78,7 @@ public class AdminService {
 
     public EstatisticasResponse getEstatisticas() {
         long totalUsuarios = usuarioRepository.count();
-        long usuariosAtivos = usuarioRepository.countByAtivo(true);
+        long usuariosAtivos = usuarioRepository.countByAtivo('S');
         long totalScripts = scriptRepository.count();
 
         Map<String, Long> scriptsPorBanco = scriptRepository.findAll()

@@ -29,6 +29,7 @@ public class Script implements Serializable{
     private String descricao;
 
     @NotBlank(message = "Conteúdo é obrigatório")
+    @Lob
     private String conteudo;
 
     @NotNull(message = "Banco de dados é obrigatório")

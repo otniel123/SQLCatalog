@@ -10,5 +10,5 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
     boolean existsByEmail(String email);
 
-    long countByAtivo(boolean ativo);
+    long countByAtivo(Character ativo);
 }

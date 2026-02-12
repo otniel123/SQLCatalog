@@ -34,8 +34,11 @@ public class Usuario implements Serializable {
     private String password;
 
 
+    @NotNull
+    @Enumerated(EnumType.STRING)
     private Role role;
 
+    @NotNull
     private LocalDateTime dataCriacao;
 
     private Character ativo;
@@ -88,19 +91,19 @@ public class Usuario implements Serializable {
         this.password = password;
     }
 
-    public @NotBlank @NotNull Role getRole() {
+    public Role getRole() {
         return role;
     }
 
-    public void setRole(@NotBlank @NotNull Role role) {
+    public void setRole( Role role) {
         this.role = role;
     }
 
-    public @NotBlank @NotNull LocalDateTime getDataCriacao() {
+    public LocalDateTime getDataCriacao() {
         return dataCriacao;
     }
 
-    public void setDataCriacao(@NotBlank @NotNull LocalDateTime dataCriacao) {
+    public void setDataCriacao(LocalDateTime dataCriacao) {
         this.dataCriacao = dataCriacao;
     }
 
