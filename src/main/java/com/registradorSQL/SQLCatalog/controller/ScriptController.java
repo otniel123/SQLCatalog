@@ -11,58 +11,55 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/scripts")
-@Valid
 public class ScriptController {
 
     @Autowired
     private ScriptService scriptService;
 
     @PostMapping
-    public ResponseEntity<Script> criarScript(@Valid @RequestBody Script script){
+    public ResponseEntity<Script> criarScript(@Valid @RequestBody Script script) {
         return ResponseEntity.status(201).body(scriptService.criaScript(script));
     }
 
     @GetMapping
-    public ResponseEntity<List<Script>> getScript(@RequestParam(required = false) String banco,
-                                                  @RequestParam(required = false) String categoria,
-                                                  @RequestParam(required = false) String texto,
-                                                  @RequestParam(required = false) String tag,
-                                                  @RequestParam(required = false, defaultValue =
-                                                          "0") Integer page,
-                                                  @RequestParam(required = false, defaultValue =
-                                                          "20") Integer size){
-        if (scriptService.listarScript(banco, categoria, texto,tag, page, size) == null){
-            return ResponseEntity.status(400).body(null);
-        }
-        return ResponseEntity.status(200).body(scriptService.listarScript(banco, categoria, texto
-                , tag, page, size));
+    public ResponseEntity<List<Script>> getScript(
+            @RequestParam(required = false) String banco,
+            @RequestParam(required = false) String categoria,
+            @RequestParam(required = false) String texto,
+            @RequestParam(required = false) String tag,
+            @RequestParam(required = false, defaultValue = "0") Integer page,
+            @RequestParam(required = false, defaultValue = "20") Integer size) {
+
+        List<Script> scripts = scriptService.listarScript(banco, categoria, texto, tag, page, size);
+        return ResponseEntity.ok(scripts);
     }
 
-
-
     @GetMapping("{id}")
-    public ResponseEntity<Script> getScriptById(@PathVariable("id") Long id){
-        if (scriptService.listarScriptById(id) != null){
-            return ResponseEntity.status(200).body(scriptService.listarScriptById(id));
+    public ResponseEntity<Script> getScriptById(@PathVariable("id") Long id) {
+        Script script = scriptService.listarScriptById(id);
+        if (script != null) {
+            return ResponseEntity.ok(script);
         }
         return ResponseEntity.status(404).body(null);
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Script> atualizarScript(@Valid @RequestBody Script script,
-                                                  @PathVariable("id") Long id){
+    public ResponseEntity<Script> atualizarScript(
+            @Valid @RequestBody Script script,
+            @PathVariable("id") Long id) {
+
         Script scriptAtualizado = scriptService.atualizarScript(script, id);
-        if (scriptAtualizado != null){
-            return ResponseEntity.status(200).body(scriptAtualizado);
+        if (scriptAtualizado != null) {
+            return ResponseEntity.ok(scriptAtualizado);
         }
         return ResponseEntity.status(404).body(null);
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Script> deletarScript(@PathVariable("id") Long id){
-        if (scriptService.deleteScript(id) == 0){
-            return ResponseEntity.status(204).body(null);
+    public ResponseEntity<Void> deletarScript(@PathVariable("id") Long id) {
+        if (scriptService.deleteScript(id) == 0) {
+            return ResponseEntity.status(204).build();
         }
-        return ResponseEntity.status(404).body(null);
+        return ResponseEntity.status(404).build();
     }
 }

@@ -25,4 +25,8 @@ public interface ScriptRepository extends JpaRepository<Script, Long> {
                                                @Param("categoria") Categoria categoria);
 
     Page<Script> findAll(Pageable pageable);
+
+    List<Script> findByUsuarioId(Long usuarioId);
+
+    Page<Script> findByUsuarioId(Long usuarioId, Pageable pageable);
 }

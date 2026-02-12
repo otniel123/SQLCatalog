@@ -8,6 +8,8 @@ public class ErrorResponse {
     private String erro;
     private String path;
 
+    public ErrorResponse(){}
+
     public ErrorResponse(LocalDateTime timeStamp, int status, String erro, String path) {
         this.timeStamp = timeStamp;
         this.status = status;
