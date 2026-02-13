@@ -45,7 +45,6 @@ public class Script implements Serializable{
     private Usuario usuario;
 
     @ElementCollection
-    @Enumerated(EnumType.STRING)
     private List<String> tags = new ArrayList<>();
     private LocalDateTime dataCriacao;
     private LocalDateTime dataAtualizacao;

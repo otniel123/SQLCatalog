@@ -1,48 +1,52 @@
 package com.registradorSQL.SQLCatalog.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 @Configuration
 public class CorsConfig {
 
+    @Value("${app.cors.frontend-url:http://localhost:4200}")
+    private String frontendUrl;
+
     @Bean
-    public CorsFilter corsFilter() {
-        CorsConfiguration corsConfiguration = new CorsConfiguration();
-        
-        // Permitir origens do frontend (desenvolvimento e produção)
-        corsConfiguration.setAllowedOrigins(Arrays.asList(
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+
+        // Origens permitidas: local + produção
+        List<String> origins = new ArrayList<>(Arrays.asList(
                 "http://localhost:3000",
-                "http://localhost:4200",    // ← ADICIONAR ESTA LINHA
+                "http://localhost:4200",
                 "http://localhost:5173",
                 "http://127.0.0.1:3000",
-                "http://127.0.0.1:4200",    // ← ADICIONAR ESTA LINHA
+                "http://127.0.0.1:4200",
                 "http://127.0.0.1:5173"
         ));
-        
-        // Permitir todos os métodos HTTP
-        corsConfiguration.setAllowedMethods(Arrays.asList(
-            "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"
+
+        // Adiciona a URL do frontend em produção (ex: https://sql-catalog.vercel.app)
+        if (frontendUrl != null && !frontendUrl.isBlank()
+                && !origins.contains(frontendUrl)) {
+            origins.add(frontendUrl);
+        }
+
+        config.setAllowedOrigins(origins);
+        config.setAllowedMethods(Arrays.asList(
+                "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"
         ));
-        
-        // Permitir todos os headers
-        corsConfiguration.setAllowedHeaders(List.of("*"));
-        
-        // Permitir credenciais
-        corsConfiguration.setAllowCredentials(true);
-        
-        // Tempo de cache para preflight requests
-        corsConfiguration.setMaxAge(3600L);
-        
+        config.setAllowedHeaders(List.of("*"));
+        config.setAllowCredentials(true);
+        config.setMaxAge(3600L);
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", corsConfiguration);
-        
-        return new CorsFilter(source);
+        source.registerCorsConfiguration("/**", config);
+        return source;
     }
 }
