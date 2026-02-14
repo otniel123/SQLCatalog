@@ -1,12 +1,13 @@
-# === Estágio 1: Build ===
-FROM eclipse-temurin:21-jdk AS build
+# Etapa 1: Build com Maven
+FROM maven:3.9-eclipse-temurin-21 AS build
 WORKDIR /app
-COPY . .
-RUN chmod +x mvnw && ./mvnw clean package -DskipTests
+COPY pom.xml .
+COPY src ./src
+RUN mvn clean package -DskipTests
 
-# === Estágio 2: Runtime ===
+# Etapa 2: Imagem de runtime leve
 FROM eclipse-temurin:21-jre
 WORKDIR /app
-COPY --from=build /app/target/SQLCatalog-0.0.1-SNAPSHOT.jar app.jar
+COPY --from=build /app/target/*.jar app.jar
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]
